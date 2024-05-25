@@ -21,6 +21,11 @@ export default function Home() {
     tempList.forEach((item) => {
       currentItems.push(item.name);
     });
+    shoppingItems.forEach((item) => {
+      if (item_names.includes(item.name)) {
+        item.quantity += 1;
+      }
+    });
     item_names.forEach((item) => {
       if (!currentItems.includes(item)) {
         var tempItem = {
@@ -29,11 +34,6 @@ export default function Home() {
           quantity: 1,
         };
         tempList.push(tempItem);
-      }
-    });
-    shoppingItems.forEach((item) => {
-      if (item_names.includes(item.name)) {
-        item.quantity += 1;
       }
     });
     console.log(shoppingItems);
