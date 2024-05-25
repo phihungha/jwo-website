@@ -7,47 +7,47 @@ export default function Home() {
   const [shoppingItems, setShoppingItems] = useState<ShoppingItem[]>([]);
   const [shoppingEvent, setShoppingEvent] = useState<ShoppingEvent>();
   function returnItem(item_names: string[]): void {
-    let tempList : ShoppingItem[]  = []
+    let tempList: ShoppingItem[] = [];
     item_names.forEach((item) => {
-        console.log(item)
-    })
+      console.log(item);
+    });
     setShoppingItems(tempList);
     console.log(tempList);
   }
 
   function addItem(item_names: string[]): void {
-    let tempList : ShoppingItem[] = shoppingItems
-    let currentItems : string[] = []
+    let tempList: ShoppingItem[] = shoppingItems;
+    let currentItems: string[] = [];
     tempList.forEach((item) => {
       currentItems.push(item.name);
-    })
-    item_names.forEach((item => {
-      if(!(currentItems.includes(item))){
-          var tempItem = {
-            id : item,
-            name: item,
-            quantity: 1,
-          }
-          tempList.push(tempItem)
+    });
+    item_names.forEach((item) => {
+      if (!currentItems.includes(item)) {
+        var tempItem = {
+          id: item,
+          name: item,
+          quantity: 1,
+        };
+        tempList.push(tempItem);
       }
-    }))
-    shoppingItems.forEach(item => {
-      if(item_names.includes(item.name)){
-        item.quantity += 1
+    });
+    shoppingItems.forEach((item) => {
+      if (item_names.includes(item.name)) {
+        item.quantity += 1;
       }
-    })
-    console.log(shoppingItems)
+    });
+    console.log(shoppingItems);
     setShoppingItems(tempList);
   }
 
   useEffect(() => {
     socket.connect();
-    socket.emit('connect_video');
+    socket.emit("connect_video");
     socket.on("Video", function (data) {
       let jsonObj = JSON.parse(data);
       let shoppingEvent = jsonObj as ShoppingEvent;
       setShoppingEvent(shoppingEvent);
-      console.log(shoppingEvent)
+      console.log(shoppingEvent);
       if (shoppingEvent.type == "PICK") {
         addItem(shoppingEvent.item_names);
         //returnItem(shoppingEvent.item_names);
@@ -61,13 +61,12 @@ export default function Home() {
   }, [socket]);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      {shoppingItems?.map( (item) => (
+      {shoppingItems?.map((item) => (
         <div key={item.id}>
-            <a>{item.name}</a>
-            <a>{item.quantity}</a>
+          <a>{item.name}</a>
+          <a>{item.quantity}</a>
         </div>
-      )
-      )}
+      ))}
     </main>
   );
 }
