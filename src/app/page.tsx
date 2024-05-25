@@ -7,21 +7,27 @@ export default function Home() {
   const [shoppingItems, setShoppingItems] = useState<ShoppingItem[]>([]);
   const [shoppingEvent, setShoppingEvent] = useState<ShoppingEvent>();
   function returnItem(item_names: string[]): void {
-    let tempList: ShoppingItem[] = [];
-    item_names.forEach((item) => {
-      console.log(item);
+    let tempList: ShoppingItem[] = shoppingItems;
+    let currentItems: string[] = [];
+    shoppingItems.forEach((item) => {
+      currentItems.push(item.name);
     });
+    tempList.forEach((item) => {
+      if (item_names.includes(item.name)) {
+        item.quantity -= 1;
+      }
+    });
+    console.log(shoppingItems);
     setShoppingItems(tempList);
-    console.log(tempList);
   }
 
   function addItem(item_names: string[]): void {
     let tempList: ShoppingItem[] = shoppingItems;
     let currentItems: string[] = [];
-    tempList.forEach((item) => {
+    shoppingItems.forEach((item) => {
       currentItems.push(item.name);
     });
-    shoppingItems.forEach((item) => {
+    tempList.forEach((item) => {
       if (item_names.includes(item.name)) {
         item.quantity += 1;
       }
@@ -50,9 +56,8 @@ export default function Home() {
       console.log(shoppingEvent);
       if (shoppingEvent.type == "PICK") {
         addItem(shoppingEvent.item_names);
-        //returnItem(shoppingEvent.item_names);
       } else if (shoppingEvent.type == "RETURN") {
-        //returnItem(shoppingEvent.item_names);
+        returnItem(shoppingEvent.item_names);
       }
     });
     return () => {
