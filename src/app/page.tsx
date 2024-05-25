@@ -1,26 +1,73 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import io from "socket.io-client";
-import { ShoppingEvent } from "./types/types";
+import { ShoppingEvent, ShoppingItem } from "./types/types";
 const socket = io("http://127.0.0.1:5000");
-
 export default function Home() {
-  const [notifications, setNotifications] = useState<ShoppingEvent>();
+  const [shoppingItems, setShoppingItems] = useState<ShoppingItem[]>([]);
+  const [shoppingEvent, setShoppingEvent] = useState<ShoppingEvent>();
+  function returnItem(item_names: string[]): void {
+    let tempList : ShoppingItem[]  = []
+    item_names.forEach((item) => {
+        console.log(item)
+    })
+    setShoppingItems(tempList);
+    console.log(tempList);
+  }
+
+  function addItem(item_names: string[]): void {
+    let tempList : ShoppingItem[] = shoppingItems
+    let currentItems : string[] = []
+    tempList.forEach((item) => {
+      currentItems.push(item.name);
+    })
+    item_names.forEach((item => {
+      if(!(currentItems.includes(item))){
+          var tempItem = {
+            id : item,
+            name: item,
+            quantity: 1,
+          }
+          tempList.push(tempItem)
+      }
+    }))
+    shoppingItems.forEach(item => {
+      if(item_names.includes(item.name)){
+        item.quantity += 1
+      }
+    })
+    console.log(shoppingItems)
+    setShoppingItems(tempList);
+  }
+
   useEffect(() => {
     socket.connect();
-    //socket.emit('connect_video')
+    socket.emit('connect_video');
     socket.on("Video", function (data) {
-      setNotifications(data);
-      let jsonObj = JSON.parse(data); // string to "any" object first
+      let jsonObj = JSON.parse(data);
       let shoppingEvent = jsonObj as ShoppingEvent;
-      setNotifications(shoppingEvent);
+      setShoppingEvent(shoppingEvent);
+      console.log(shoppingEvent)
+      if (shoppingEvent.type == "PICK") {
+        addItem(shoppingEvent.item_names);
+        //returnItem(shoppingEvent.item_names);
+      } else if (shoppingEvent.type == "RETURN") {
+        //returnItem(shoppingEvent.item_names);
+      }
     });
-  }, []);
+    return () => {
+      socket.off("Video");
+    };
+  }, [socket]);
   return (
     <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <a>{notifications?.time}</a>
-      <a>{notifications?.item_names}</a>
-      <a>{notifications?.type}</a>
+      {shoppingItems?.map( (item) => (
+        <div key={item.id}>
+            <a>{item.name}</a>
+            <a>{item.quantity}</a>
+        </div>
+      )
+      )}
     </main>
   );
 }

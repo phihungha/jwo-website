@@ -3,3 +3,8 @@ export interface ShoppingEvent {
   type: string;
   item_names: string[];
 }
+export interface ShoppingItem {
+  id: string;
+  name: string;
+  quantity: number;
+}
