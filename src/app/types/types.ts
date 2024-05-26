@@ -4,7 +4,7 @@ export interface ShoppingEvent {
   item_names: string[];
 }
 export interface ShoppingItem {
-  id: string;
+  id: number;
   name: string;
   quantity: number;
 }

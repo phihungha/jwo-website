@@ -37,7 +37,7 @@ export default function Home() {
     item_names.forEach((item) => {
       if (!currentItems.includes(item)) {
         var tempItem = {
-          id: item,
+          id: Math.random()*101|0,
           name: item,
           quantity: 1,
         };
@@ -55,9 +55,9 @@ export default function Home() {
       let shoppingEvent = jsonObj as ShoppingEvent;
       setShoppingEvent(shoppingEvent);
       console.log(shoppingEvent);
-      if (shoppingEvent.type == "PICK") {
+      if (shoppingEvent.type == "ActionType.PICK") {
         addItem(shoppingEvent.item_names);
-      } else if (shoppingEvent.type == "RETURN") {
+      } else if (shoppingEvent.type == "ActionType.RETURN") {
         returnItem(shoppingEvent.item_names);
       }
     });
