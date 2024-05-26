@@ -50,7 +50,6 @@ export default function Home() {
 
   useEffect(() => {
     socket.connect();
-    socket.emit("connect_video");
     socket.on("Video", function (data) {
       let jsonObj = JSON.parse(data);
       let shoppingEvent = jsonObj as ShoppingEvent;
