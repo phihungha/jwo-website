@@ -1,5 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
+import { Card, CardBody, Stack, Image, Heading, Text } from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import io from "socket.io-client";
 import { ShoppingEvent, ShoppingItem } from "./types/types";
 const socket = io("http://127.0.0.1:5000");
@@ -35,7 +37,7 @@ export default function Home() {
     item_names.forEach((item) => {
       if (!currentItems.includes(item)) {
         var tempItem = {
-          id: item,
+          id: Math.random()*101|0,
           name: item,
           quantity: 1,
         };
@@ -48,15 +50,14 @@ export default function Home() {
 
   useEffect(() => {
     socket.connect();
-    socket.emit("connect_video");
     socket.on("Video", function (data) {
       let jsonObj = JSON.parse(data);
       let shoppingEvent = jsonObj as ShoppingEvent;
       setShoppingEvent(shoppingEvent);
       console.log(shoppingEvent);
-      if (shoppingEvent.type == "PICK") {
+      if (shoppingEvent.type == "ActionType.PICK") {
         addItem(shoppingEvent.item_names);
-      } else if (shoppingEvent.type == "RETURN") {
+      } else if (shoppingEvent.type == "ActionType.RETURN") {
         returnItem(shoppingEvent.item_names);
       }
     });
@@ -65,13 +66,34 @@ export default function Home() {
     };
   }, [socket]);
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      {shoppingItems?.map((item) => (
-        <div key={item.id}>
-          <a>{item.name}</a>
-          <a>{item.quantity}</a>
-        </div>
-      ))}
-    </main>
+    <ChakraProvider>
+      <main className="flex min-h-screen flex-col items-center justify-between p-24">
+        {shoppingItems?.map((item) => (
+          <Card
+            key={item.id}
+            direction={{ base: "column", sm: "row" }}
+            overflow="hidden"
+            variant="outline"
+          >
+            <Image
+              objectFit="cover"
+              maxW={{ base: "100%", sm: "200px" }}
+              src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
+              alt="Caffe Latte"
+            />
+
+            <Stack>
+              <CardBody>
+                <Heading size="md">{item.name}</Heading>
+                <Stack direction={["column", "row"]} spacing="24px">
+                  <Text py="2">Quantity:</Text>
+                  <Text py="2">{item.quantity}</Text>
+                </Stack>
+              </CardBody>
+            </Stack>
+          </Card>
+        ))}
+      </main>
+    </ChakraProvider>
   );
 }
