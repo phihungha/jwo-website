@@ -1,10 +1,13 @@
-export interface ShoppingEvent {
-  time: number;
-  type: string;
-  item_names: string[];
+export interface CartItem {
+  productId: number;
+  quantity: number;
+  product: Product;
+  unitPrice: number;
+  linePrice: number;
 }
-export interface ShoppingItem {
+export interface Product {
   id: number;
   name: string;
-  quantity: number;
+  price: number;
+  imageUrl: string;
 }

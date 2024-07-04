@@ -1,43 +1,44 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Card, CardBody, Stack, Image, Heading, Text } from "@chakra-ui/react";
-import { ChakraProvider } from "@chakra-ui/react";
+import { VStack, Text } from "@chakra-ui/react";
 import io from "socket.io-client";
-import { ShoppingEvent, ShoppingItem } from "./types/types";
-const socket = io("http://localhost:3000",{transports: ["websocket", "polling"]});
+import { CartItem } from "./types/types";
+import CardItem from "./components/CardItem";
+const socket = io("http://localhost:5000/cart");
 export default function Home() {
-  const [shoppingItems, setShoppingItems] = useState<ShoppingItem[]>([]);
-  const [shoppingEvent, setShoppingEvent] = useState<ShoppingEvent>();
-  function returnItem(item_names: string[]): void {
-    let tempList: ShoppingItem[] = shoppingItems;
-    let currentItems: string[] = [];
-    shoppingItems.forEach((item) => {
-      currentItems.push(item.name);
-    });
-    tempList.forEach((item) => {
-      if (item_names.includes(item.name)) {
-        item.quantity -= 1;
-      }
-    });
-    console.log(shoppingItems);
-    setShoppingItems(tempList);
-  }
+  const [shoppingCart, setShoppingCart] = useState<CartItem[]>([]);
 
   useEffect(() => {
-    socket.emit("connection");
-    socket.on("Videos", (data) => {
-      console.log(data); // true
+    socket.emit("get");
+    socket.on("cart-updated", (data) => {
+      console.log(data);
+      let temp = data as CartItem[];
+      setShoppingCart(temp);
+      console.log(shoppingCart);
     });
     return () => {
-      socket.off("Videos");
+      socket.off("cart-updated");
     };
-    }, []);
+  }, []);
 
   return (
-    <ChakraProvider>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        <a>ABC</a>
-      </main>
-    </ChakraProvider>
+    <main>
+      <Text paddingBottom="10" fontWeight="bold" fontSize="2xl">
+        Shop Cart
+      </Text>
+      <VStack spacing={4} align="stretch">
+        {shoppingCart.map((item) => (
+          <div key={item.productId}>
+            <CardItem
+              product={item.product}
+              productId={item.productId}
+              quantity={item.quantity}
+              linePrice={item.linePrice}
+              unitPrice={item.unitPrice}
+            />
+          </div>
+        ))}
+      </VStack>
+    </main>
   );
 }
