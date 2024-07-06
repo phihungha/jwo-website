@@ -1,5 +1,4 @@
 import { Card, Image, Stack, Text, CardBody } from "@chakra-ui/react";
-import { ReactElement } from "react";
 import { Product } from "../types/types";
 import CurrencyFormat from "../utils/currency-formats";
 
@@ -7,13 +6,13 @@ interface CardProps {
   productId: number;
   quantity: number;
   product: Product;
-  unitPrice: number;
-  linePrice: number;
+  unitPrice: string;
+  linePrice: string;
 }
 
 const CardItem = (props: CardProps) => {
-  let price = CurrencyFormat.format(props.unitPrice);
-  let totalPrice = CurrencyFormat.format(props.linePrice);
+  let price = CurrencyFormat.format(parseFloat(props.unitPrice));
+  let totalPrice = CurrencyFormat.format(parseFloat(props.linePrice));
   return (
     <Card
       direction={{ base: "column", sm: "row" }}
@@ -23,14 +22,14 @@ const CardItem = (props: CardProps) => {
       <Image
         objectFit="cover"
         maxW={{ base: "100%", sm: "200px" }}
-        src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
-        alt="Caffe Latte"
+        src={props.product.imageUrl}
+        alt={props.product.name}
       />
 
       <Stack>
         <CardBody>
           <Text fontWeight="bold" fontSize="xl">
-            Cell Phone
+            {props.product.name}
           </Text>
 
           <Stack mt={3} spacing={3}>

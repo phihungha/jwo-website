@@ -2,8 +2,8 @@ export interface CartItem {
   productId: number;
   quantity: number;
   product: Product;
-  unitPrice: number;
-  linePrice: number;
+  unitPrice: string;
+  linePrice: string;
 }
 export interface Product {
   id: number;

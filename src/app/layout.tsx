@@ -1,10 +1,4 @@
-import {
-  Box,
-  ChakraProvider,
-  Drawer,
-  DrawerContent,
-  useDisclosure,
-} from "@chakra-ui/react";
+import { ChakraProvider } from "@chakra-ui/react";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
