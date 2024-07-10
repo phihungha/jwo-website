@@ -1,99 +1,78 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { Card, CardBody, Stack, Image, Heading, Text } from "@chakra-ui/react";
-import { ChakraProvider } from "@chakra-ui/react";
+import { Button, HStack, VStack, Text, Divider } from "@chakra-ui/react";
 import io from "socket.io-client";
-import { ShoppingEvent, ShoppingItem } from "./types/types";
-const socket = io("http://127.0.0.1:5000");
+import { CartItem } from "./types/types";
+import CardItem from "./components/CardItem";
+import CurrencyFormat from "./utils/currency-formats";
+const socket = io("http://localhost:5000/cart");
 export default function Home() {
-  const [shoppingItems, setShoppingItems] = useState<ShoppingItem[]>([]);
-  const [shoppingEvent, setShoppingEvent] = useState<ShoppingEvent>();
-  function returnItem(item_names: string[]): void {
-    let tempList: ShoppingItem[] = shoppingItems;
-    let currentItems: string[] = [];
-    shoppingItems.forEach((item) => {
-      currentItems.push(item.name);
-    });
-    tempList.forEach((item) => {
-      if (item_names.includes(item.name)) {
-        item.quantity -= 1;
-      }
-    });
-    console.log(shoppingItems);
-    setShoppingItems(tempList);
-  }
+  const [shoppingCart, setShoppingCart] = useState<CartItem[]>([]);
+  const [totalPrice, setTotalPrice] = useState("");
 
-  function addItem(item_names: string[]): void {
-    let tempList: ShoppingItem[] = shoppingItems;
-    let currentItems: string[] = [];
-    shoppingItems.forEach((item) => {
-      currentItems.push(item.name);
-    });
-    tempList.forEach((item) => {
-      if (item_names.includes(item.name)) {
-        item.quantity += 1;
-      }
-    });
-    item_names.forEach((item) => {
-      if (!currentItems.includes(item)) {
-        var tempItem = {
-          id: Math.random()*101|0,
-          name: item,
-          quantity: 1,
-        };
-        tempList.push(tempItem);
-      }
-    });
-    console.log(shoppingItems);
-    setShoppingItems(tempList);
-  }
+  const onClear = () => {
+    socket.emit("clear");
+  };
 
   useEffect(() => {
-    socket.connect();
-    socket.on("Video", function (data) {
-      let jsonObj = JSON.parse(data);
-      let shoppingEvent = jsonObj as ShoppingEvent;
-      setShoppingEvent(shoppingEvent);
-      console.log(shoppingEvent);
-      if (shoppingEvent.type == "ActionType.PICK") {
-        addItem(shoppingEvent.item_names);
-      } else if (shoppingEvent.type == "ActionType.RETURN") {
-        returnItem(shoppingEvent.item_names);
-      }
+    socket.emit("get");
+    socket.on("updated", (data) => {
+      let temp = data as CartItem[];
+      setShoppingCart(temp);
+      const total = shoppingCart.reduce(
+        (acc, item) => acc + parseFloat(item.linePrice),
+        0,
+      );
+      setTotalPrice(CurrencyFormat.format(total));
     });
     return () => {
-      socket.off("Video");
+      socket.off("updated");
     };
-  }, [socket]);
-  return (
-    <ChakraProvider>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        {shoppingItems?.map((item) => (
-          <Card
-            key={item.id}
-            direction={{ base: "column", sm: "row" }}
-            overflow="hidden"
-            variant="outline"
-          >
-            <Image
-              objectFit="cover"
-              maxW={{ base: "100%", sm: "200px" }}
-              src="https://images.unsplash.com/photo-1667489022797-ab608913feeb?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxlZGl0b3JpYWwtZmVlZHw5fHx8ZW58MHx8fHw%3D&auto=format&fit=crop&w=800&q=60"
-              alt="Caffe Latte"
-            />
+  });
 
-            <Stack>
-              <CardBody>
-                <Heading size="md">{item.name}</Heading>
-                <Stack direction={["column", "row"]} spacing="24px">
-                  <Text py="2">Quantity:</Text>
-                  <Text py="2">{item.quantity}</Text>
-                </Stack>
-              </CardBody>
-            </Stack>
-          </Card>
+  return (
+    <main>
+      <Text paddingLeft={20} fontWeight="bold" fontSize="2xl">
+        Shop Cart
+      </Text>
+      <VStack
+        paddingLeft={20}
+        paddingRight={20}
+        paddingBottom={20}
+        paddingTop={10}
+        spacing={5}
+        align="stretch"
+      >
+        <HStack justifyContent="flex-end" spacing={5}>
+          <Button
+            colorScheme="gray"
+            variant="outline"
+            onClick={() => onClear()}
+          >
+            Clear
+          </Button>
+        </HStack>
+        {shoppingCart.map((item) => (
+          <div key={item.productId}>
+            <CardItem
+              product={item.product}
+              productId={item.productId}
+              quantity={item.quantity}
+              linePrice={item.linePrice}
+              unitPrice={item.unitPrice}
+            />
+          </div>
         ))}
-      </main>
-    </ChakraProvider>
+        <Divider paddingTop={10} />
+        <HStack justifyContent="flex-end" spacing={5}>
+          <Text paddingTop={5} fontWeight="bold" fontSize="2xl">
+            Total:
+          </Text>
+          <Text paddingTop={5} fontWeight="bold" fontSize="2xl">
+            {totalPrice}
+          </Text>
+        </HStack>
+      </VStack>
+    </main>
   );
 }
