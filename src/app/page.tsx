@@ -53,25 +53,25 @@ export default function Home() {
             Clear
           </Button>
         </HStack>
-       <motion.ul transition={{staggerChildren: 0.5}}>
-        {shoppingCart.map((item) => (
-          <motion.div
-          key={item.productId}
-          initial={{x: "-50px", opacity: 0}}
-          animate={{x: "0", opacity: 1}}
-          whileHover={{scale: 1.1}}
-          >
-            <CardItem
-              product={item.product}
-              productId={item.productId}
-              quantity={item.quantity}
-              linePrice={item.linePrice}
-              unitPrice={item.unitPrice}
-            />
-          </motion.div>
-        ))}
+        <motion.ul transition={{ staggerChildren: 0.5 }}>
+          {shoppingCart.map((item) => (
+            <motion.div
+              key={item.productId}
+              initial={{ x: "-50px", opacity: 0 }}
+              animate={{ x: "0", opacity: 1 }}
+              whileHover={{ scale: 1.1 }}
+            >
+              <CardItem
+                product={item.product}
+                productId={item.productId}
+                quantity={item.quantity}
+                linePrice={item.linePrice}
+                unitPrice={item.unitPrice}
+              />
+            </motion.div>
+          ))}
         </motion.ul>
-        
+
         <Divider paddingTop={10} />
         <HStack justifyContent="flex-end" spacing={5}>
           <Text paddingTop={5} fontWeight="bold" fontSize="2xl">
