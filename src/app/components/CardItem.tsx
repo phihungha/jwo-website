@@ -1,6 +1,7 @@
 import { Card, Image, Stack, Text, CardBody } from "@chakra-ui/react";
 import { Product } from "../types/types";
 import CurrencyFormat from "../utils/currency-formats";
+import FlipLink from "./FlipLink";
 
 interface CardProps {
   productId: number;
@@ -13,7 +14,9 @@ interface CardProps {
 const CardItem = (props: CardProps) => {
   let price = CurrencyFormat.format(parseFloat(props.unitPrice));
   let totalPrice = CurrencyFormat.format(parseFloat(props.linePrice));
+  let quantity = props.quantity.toString();
   return (
+  <Stack paddingTop={10}>  
     <Card
       direction={{ base: "column", sm: "row" }}
       overflow="hidden"
@@ -35,7 +38,7 @@ const CardItem = (props: CardProps) => {
           <Stack mt={3} spacing={3}>
             <Stack alignItems="center" direction="row" spacing={3}>
               <Text fontWeight="bold">Quantity:</Text>
-              <Text>{props.quantity}</Text>
+              <Text>{quantity}</Text>
             </Stack>
             <Stack alignItems="center" direction="row" spacing={3}>
               <Text fontWeight="bold">Price:</Text>
@@ -49,6 +52,7 @@ const CardItem = (props: CardProps) => {
         </CardBody>
       </Stack>
     </Card>
+    </Stack>
   );
 };
 export default CardItem;
