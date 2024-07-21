@@ -33,7 +33,7 @@ export default function Home() {
 
   return (
     <main>
-      <Text paddingLeft={20} fontWeight="bold" fontSize="2xl">
+      <Text paddingTop={10} paddingLeft={20} fontWeight="bold" fontSize="2xl">
         Shop Cart
       </Text>
       <VStack
