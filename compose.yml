@@ -1,0 +1,7 @@
+services:
+  jwo-website:
+    container_name: jwo-website
+    image: haphihung55/jwo-website:latest
+    build: .
+    ports:
+      - ${SERVICE_PORT}:3000
