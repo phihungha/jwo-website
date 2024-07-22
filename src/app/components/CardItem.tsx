@@ -1,7 +1,6 @@
 import { Card, Image, Stack, Text, CardBody } from "@chakra-ui/react";
 import { Product } from "../types/types";
 import CurrencyFormat from "../utils/currency-formats";
-import FlipLink from "./FlipLink";
 
 interface CardProps {
   productId: number;
