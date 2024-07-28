@@ -5,6 +5,7 @@ import io from "socket.io-client";
 import { CartItem } from "./types/types";
 import CardItem from "./components/CardItem";
 import CurrencyFormat from "./utils/currency-formats";
+import { motion } from "framer-motion";
 const socket = io("http://localhost:5000/cart");
 export default function Home() {
   const [shoppingCart, setShoppingCart] = useState<CartItem[]>([]);
@@ -32,7 +33,7 @@ export default function Home() {
 
   return (
     <main>
-      <Text paddingLeft={20} fontWeight="bold" fontSize="2xl">
+      <Text paddingTop={10} paddingLeft={20} fontWeight="bold" fontSize="2xl">
         Shop Cart
       </Text>
       <VStack
@@ -52,17 +53,25 @@ export default function Home() {
             Clear
           </Button>
         </HStack>
-        {shoppingCart.map((item) => (
-          <div key={item.productId}>
-            <CardItem
-              product={item.product}
-              productId={item.productId}
-              quantity={item.quantity}
-              linePrice={item.linePrice}
-              unitPrice={item.unitPrice}
-            />
-          </div>
-        ))}
+        <motion.ul transition={{ staggerChildren: 0.5 }}>
+          {shoppingCart.map((item) => (
+            <motion.div
+              key={item.productId}
+              initial={{ x: "-50px", opacity: 0 }}
+              animate={{ x: "0", opacity: 1 }}
+              whileHover={{ scale: 1.1 }}
+            >
+              <CardItem
+                product={item.product}
+                productId={item.productId}
+                quantity={item.quantity}
+                linePrice={item.linePrice}
+                unitPrice={item.unitPrice}
+              />
+            </motion.div>
+          ))}
+        </motion.ul>
+
         <Divider paddingTop={10} />
         <HStack justifyContent="flex-end" spacing={5}>
           <Text paddingTop={5} fontWeight="bold" fontSize="2xl">
